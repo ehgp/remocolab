@@ -126,7 +126,7 @@ def _setupSSHDMain(ngrok_region, check_gpu_available, NGROK_ID):
   print("Copy&paste your tunnel authtoken from https://dashboard.ngrok.com/auth")
   print("(You need to sign up for ngrok and login,)")
   ngrok_token = NGROK_ID
-  
+
   if check_gpu_available and not _check_gpu_available():
     return (False, "")
   
@@ -247,7 +247,6 @@ no-x11-tcp-connections
   vncrun_py = tempfile.gettempdir() / pathlib.Path("vncrun.py")
   vncrun_py.write_text("""\
 import subprocess, secrets, pathlib
-
 vnc_passwd = secrets.token_urlsafe()[:8]
 vnc_viewonly_passwd = secrets.token_urlsafe()[:8]
 print("✂️"*24)
@@ -268,7 +267,6 @@ vnc_user_passwd.chmod(0o600)
 subprocess.run(
   ["/opt/TurboVNC/bin/vncserver"]
 )
-
 #Disable screensaver because no one would want it.
 (pathlib.Path.home() / ".xscreensaver").write_text("mode: off\\n")
 """)
