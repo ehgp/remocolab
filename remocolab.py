@@ -65,7 +65,7 @@ def _setupSSHDImpl(ngrok_token, ngrok_region):
 
   #Prevent ssh session disconnection.
   with open("/etc/ssh/sshd_config", "a") as f:
-    f.write("\n\nClientAliveInterval 120\n")
+    f.write("\n\nClientAliveInterval 12000\n")
 
   msg = ""
   msg += "ECDSA key fingerprint of host:\n"
@@ -121,7 +121,7 @@ def _setupSSHDImpl(ngrok_token, ngrok_region):
   msg += "✂️"*24 + "\n"
   return msg
 
-def _setupSSHDMain(ngrok_region, check_gpu_available):
+def _setupSSHDMain(ngrok_region, check_gpu_available, NGROK_ID):
   if check_gpu_available and not _check_gpu_available():
     return (False, "")
 
@@ -129,7 +129,7 @@ def _setupSSHDMain(ngrok_region, check_gpu_available):
   print("Copy&paste your tunnel authtoken from https://dashboard.ngrok.com/auth")
   print("(You need to sign up for ngrok and login,)")
   #Set your ngrok Authtoken.
-  ngrok_token = getpass.getpass()
+  ngrok_token = NGROK_ID
 
   if not ngrok_region:
     print("Select your ngrok region:")
@@ -144,8 +144,8 @@ def _setupSSHDMain(ngrok_region, check_gpu_available):
 
   return (True, _setupSSHDImpl(ngrok_token, ngrok_region))
 
-def setupSSHD(ngrok_region = None, check_gpu_available = False):
-  s, msg = _setupSSHDMain(ngrok_region, check_gpu_available)
+def setupSSHD(ngrok_region = None, check_gpu_available = False, len(NGROK_ID)= 49):
+  s, msg = _setupSSHDMain(ngrok_region, check_gpu_available, NGROK_ID)
   print(msg)
 
 def _setup_nvidia_gl():
@@ -214,6 +214,10 @@ def _setupVNC():
   virtualGL_url = "https://astuteinternet.dl.sourceforge.net/project/virtualgl/{0}/virtualgl_{0}_amd64.deb".format(virtualGL_ver)
   turboVNC_url = "https://astuteinternet.dl.sourceforge.net/project/turbovnc/{0}/turbovnc_{0}_amd64.deb".format(turboVNC_ver)
 
+  gpu_name = _get_gpu_name()
+  if gpu_name != None:
+    _setup_nvidia_gl()
+
   _download(libjpeg_url, "libjpeg-turbo.deb")
   _download(virtualGL_url, "virtualgl.deb")
   _download(turboVNC_url, "turbovnc.deb")
@@ -232,9 +236,7 @@ no-httpd
 no-x11-tcp-connections
 """)
 
-  gpu_name = _get_gpu_name()
-  if gpu_name != None:
-    _setup_nvidia_gl()
+
 
   vncrun_py = tempfile.gettempdir() / pathlib.Path("vncrun.py")
   vncrun_py.write_text("""\
@@ -271,8 +273,8 @@ subprocess.run(
                     universal_newlines = True)
   return r.stdout
 
-def setupVNC(ngrok_region = None, check_gpu_available = True):
-  stat, msg = _setupSSHDMain(ngrok_region, check_gpu_available)
+def setupVNC(ngrok_region = None, check_gpu_available = True, NGROK_ID):
+  stat, msg = _setupSSHDMain(ngrok_region, check_gpu_available, NGROK_ID)
   if stat:
     msg += _setupVNC()
 
