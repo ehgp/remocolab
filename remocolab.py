@@ -168,6 +168,7 @@ def _setup_nvidia_gl():
                   check = True,
                   universal_newlines = True)
   nvidia_version = ret.stdout.strip()
+  print(nvidia_version)
   nvidia_url = "https://us.download.nvidia.com/tesla/{0}/NVIDIA-Linux-x86_64-{0}.run".format(nvidia_version)
   _download(nvidia_url, "nvidia.run")
   pathlib.Path("nvidia.run").chmod(stat.S_IXUSR)
