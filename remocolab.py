@@ -32,6 +32,7 @@ def _get_gpu_name():
 
 def _check_gpu_available():
   gpu_name = _get_gpu_name()
+  print(gpu_name)
   if gpu_name == None:
     print("This is not a runtime with GPU")
   elif gpu_name == "Tesla K80":
@@ -220,9 +221,6 @@ def _setupVNC():
   virtualGL_url = "https://astuteinternet.dl.sourceforge.net/project/virtualgl/{0}/virtualgl_{0}_amd64.deb".format(virtualGL_ver)
   turboVNC_url = "https://astuteinternet.dl.sourceforge.net/project/turbovnc/{0}/turbovnc_{0}_amd64.deb".format(turboVNC_ver)
 
-  gpu_name = _get_gpu_name()
-  if gpu_name != None:
-    _setup_nvidia_gl()
 
   _download(libjpeg_url, "libjpeg-turbo.deb")
   _download(virtualGL_url, "virtualgl.deb")
@@ -241,7 +239,9 @@ no-remote-connections
 no-httpd
 no-x11-tcp-connections
 """)
-
+  gpu_name = _get_gpu_name()
+  if gpu_name != None:
+    _setup_nvidia_gl()
 
 
   vncrun_py = tempfile.gettempdir() / pathlib.Path("vncrun.py")
