@@ -65,7 +65,7 @@ def _setupSSHDImpl(ngrok_token, ngrok_region):
 
   #Prevent ssh session disconnection.
   with open("/etc/ssh/sshd_config", "a") as f:
-    f.write("\n\nClientAliveInterval 12000\n")
+    f.write("\n\nClientAliveInterval 120\n")
 
   msg = ""
   msg += "ECDSA key fingerprint of host:\n"
@@ -277,7 +277,7 @@ subprocess.run(
                     universal_newlines = True)
   return r.stdout
 
-def setupVNC(ngrok_region = None, check_gpu_available = True, NGROK_ID = None):
+def setupVNC(ngrok_region = None, check_gpu_available = False, NGROK_ID = None):
   stat, msg = _setupSSHDMain(ngrok_region, check_gpu_available, NGROK_ID)
   if stat:
     msg += _setupVNC()
